@@ -19,69 +19,66 @@ def init() -> None:
 
 def printBoard() -> None:
     """ prints the board on the screen based on the values in the board list 
-        
-        extra info: 
-        - a line space on top and bottom
-        - 3 spaces at the start, 4 spaces in-between
-        - Numbers also have spaces
     """
     print() # Line break
 
-    # Define the row separator
-    separator = "--+---+--"
+    row_separator = "--+---+--"
 
-    # Print the board using a loop
+    # Loop through the starting indices of each row in a 3x3 grid
     for i in range(0, 9, 3):
+        # Print the current row of the board and its indices
         print(f"   {board[i]} | {board[i+1]} | {board[i+2]}    {i} | {i+1} | {i+2}")
-        if i < 6:  # Add separator between rows, but not after the last row
-            print(f"   {separator}    {separator}")
+        
+        # Print a row separator if this is not the last row
+        if i < 6:
+            print(f"   {row_separator}    {row_separator}")
 
     print() # Line break
 
 def playerNextMove() -> None:
-    """ Prompts the player for a valid cell number, 
-        and prints the info and the updated board.
-        Error checks ensure the input is a valid cell number and not already taken.
+    """ prompts the player for a valid cell number, 
+        and prints the info and the updated board;
+        error checks that the input is a valid cell number 
     """
     while True:
         try:
-            # Prompt the player to input a cell number
+            # Ask the player for a cell number
             user = int(input("Next move for X (state a valid cell num): "))
-            
-            # Check if the input is within the valid range and the cell is available
+
+            # Check if the cell number is valid and not already occupied
             if user < 0 or user > 8 or board[user] != ' ':
-                print("Must enter a valid cell number") 
+                print("Must enter a valid cell number")
             else:
                 # Update the board with the player's move
                 print("You chose cell", user)
                 board[user] = 'X'
-                played.add(user)  
-                break  
+                played.add(user)
+                break
         except ValueError:
-            # Handle cases where the input is not an integer
+            # Handle non-integer inputs
             print("Must be an integer")
 
-    printBoard() # Display updated board
+    printBoard()  # Show the updated board
 
 def computerNextMove() -> None:
     """ Computer randomly chooses a valid cell, 
         and prints the info and the updated board 
     """
     while True:
-        # Generate a random cell number between 0 and 8
-        user = random.randint(0, 8)
-        
-        # Check if the randomly chosen cell is available. If the cell is occupied, choose another random cell
-        if board[user] != ' ':
-            user = random.randint(0, 8)
+        # Pick a random cell number between 0 and 8
+        ai = random.randint(0, 8)
+
+        # If the cell is taken, choose another one
+        if board[ai] != ' ':
+            continue
         else:
-            # If the cell is available, make the move
-            print("Computer chose cell", user)
-            board[user] = 'O'  
-            played.add(user)  
+            # If the cell is free, make the move
+            print("Computer chose cell", ai)
+            board[ai] = 'O'
+            played.add(ai)
             break
 
-    printBoard() # Display updated board
+    printBoard()  # Show the updated board
 
 def hasWon(who: str) -> bool:
     """ returns True if who (being passed 'X' or 'O') has won, False otherwise """
@@ -102,7 +99,7 @@ def hasWon(who: str) -> bool:
     for pos in played:  # Iterate over each position in the global played set
         if board[pos] == who:   # Check if the board position is occupied by 'who'
             who_pos.add(pos)    # Add the position to the who_pos set
-      
+
     for combo in win_comb:  # Check if any winning combination is a subset of who_pos
         if combo.issubset(who_pos):
             return True  # 'who' has won
@@ -133,21 +130,14 @@ def terminate(who: str) -> bool:
     for pos in played:  # Iterate over each position in the global played set
         if board[pos] == who:   # Check if the board position is occupied by 'who'
             who_pos.add(pos)    # Add the position to the who_pos set
-      
+
     for combo in win_comb:  # Check if any winning combination is a subset of who_pos
         if combo.issubset(who_pos):
             print("You won! Thanks for playing." if who == 'X' else "You lost! Thanks for playing.")
             return True  # 'who' has won
-            
-    # Check if all winning combinations are blocked
-    all_combos_blocked = True
-    for combo in win_comb:
-        if all(board[i] == ' ' or board[i] == who for i in combo):
-            all_combos_blocked = False
-            break
 
     # Check for a draw or a blocked game
-    if all_combos_blocked or len(played) == 9:
+    if len(played) == 9:
         print("A draw! Thanks for playing.")
         return True
 
