@@ -61,7 +61,7 @@ def playerNextMove() -> None:
     printBoard()  # Show the updated board
 
 def computerNextMove() -> None:
-    """ Computer randomly chooses a valid cell, 
+    """ computer randomly chooses a valid cell, 
         and prints the info and the updated board 
     """
     while True:
@@ -81,8 +81,8 @@ def computerNextMove() -> None:
     printBoard()  # Show the updated board
 
 def hasWon(who: str) -> bool:
-    """ returns True if who (being passed 'X' or 'O') has won, False otherwise """
-
+    """ returns True if who (being passed 'X' or 'O') has won, False otherwise 
+    """
     who_pos = set()  # Initialize an empty set to hold positions for 'who'
 
     win_comb = [
@@ -113,35 +113,17 @@ def terminate(who: str) -> bool:
                 "You lost! Thanks for playing." or 
                 "A draw! Thanks for playing."  
     """
-
-    who_pos = set()  # Initialize an empty set to hold positions for 'who'
-
-    win_comb = [
-        {0, 1, 2},  # Top row
-        {3, 4, 5},  # Middle row
-        {6, 7, 8},  # Bottom row
-        {0, 3, 6},  # Left column
-        {1, 4, 7},  # Middle column
-        {2, 5, 8},  # Right column
-        {0, 4, 8},  # Diagonal from top-left to bottom-right
-        {2, 4, 6}   # Diagonal from top-right to bottom-left
-    ]
-
-    for pos in played:  # Iterate over each position in the global played set
-        if board[pos] == who:   # Check if the board position is occupied by 'who'
-            who_pos.add(pos)    # Add the position to the who_pos set
-
-    for combo in win_comb:  # Check if any winning combination is a subset of who_pos
-        if combo.issubset(who_pos):
-            print("You won! Thanks for playing." if who == 'X' else "You lost! Thanks for playing.")
-            return True  # 'who' has won
-
-    # Check for a draw or a blocked game
-    if len(played) == 9:
+    if (who == 'X' and hasWon('X')):
+        print("You won! Thanks for playing.")
+        return True
+    elif (who == 'O' and hasWon('O')):
+        print("You lost! Thanks for playing.")
+        return True
+    elif len(played) == 9: # Check for a draw
         print("A draw! Thanks for playing.")
         return True
-
-    return False
+    else:
+        return False
 
 if __name__ == "__main__":
     # Use as is. 
