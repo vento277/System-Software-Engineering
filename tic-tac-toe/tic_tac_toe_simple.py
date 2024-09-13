@@ -86,15 +86,10 @@ def hasWon(who: str) -> bool:
     who_pos = set()  # Initialize an empty set to hold positions for 'who'
 
     win_comb = [
-        {0, 1, 2},  # Top row
-        {3, 4, 5},  # Middle row
-        {6, 7, 8},  # Bottom row
-        {0, 3, 6},  # Left column
-        {1, 4, 7},  # Middle column
-        {2, 5, 8},  # Right column
-        {0, 4, 8},  # Diagonal from top-left to bottom-right
-        {2, 4, 6}   # Diagonal from top-right to bottom-left
-    ]
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8},    # Rows rows
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8},    # Columns columns
+            {0, 4, 8}, {2, 4, 6}    # Diagonals
+            ]
 
     for pos in played:  # Iterate over each position in the global played set
         if board[pos] == who:   # Check if the board position is occupied by 'who'

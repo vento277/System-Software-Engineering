@@ -61,141 +61,237 @@ def playerNextMove() -> None:
     printBoard()  # Show the updated board
 
 def computerNextMove() -> None:
-    """ Computer randomly chooses a valid cell, 
+    """ computer randomly chooses a valid cell, 
         and prints the info and the updated board 
     """
     while True:
-
         def get_safe_corners() -> list:
+            """ Determine the corners that are optimal for the player to occupy
+                based on the current state of the board and the positions of 'X' and 'O'.
+            """
             safe_corners = []
 
-            # Add corners based on the absence of 'X' in specific positions
+            # Check each corner and add it to the list if it is not occupied by 'X'
             if board[1] != 'X': safe_corners.extend([0, 2])
             if board[3] != 'X': safe_corners.extend([0, 6])
             if board[5] != 'X': safe_corners.extend([2, 8])
             if board[7] != 'X': safe_corners.extend([6, 8])
 
-            # Convert list to a set to remove duplicates and keep only empty corners
+            # Remove duplicate corners and retain only those that are empty
             safe_corners = list(set(corner for corner in safe_corners if board[corner] == ' '))
 
-            # Remove corners based on specific dangerous patterns
-            dangerous_patterns = {
-                # If 'O' is at 0 and 'X' is at 1, remove corners 2 and 8...so on
-                (0, 1): [2, 8], (0, 3): [6, 8],    
-                (2, 1): [0, 8], (2, 5): [6, 8],
-                (6, 7): [8, 2], (6, 3): [0, 2],     
-                (8, 7): [0, 6], (8, 5): [0, 2],   
-            }
+            # Define patterns where placing 'O' in a specific corner and 'X' in another would make certain corners unsafe due to potential winning combinations for 'X'
+            # (position of 'O', position of 'X'): [list of unsafe corners]
+            dangerous_patterns = { 
+                (0, 1): [2, 8], (0, 3): [6, 8], (0, 7): [8], (0, 5): [8],   
+                (8, 7): [0, 6], (8, 5): [0, 2], (8, 1): [0], (8, 3): [0],  
+                (2, 1): [0, 6], (2, 5): [6, 8], 
+                (6, 7): [8, 2], (6, 3): [0, 2]    
+            } 
+            # The reason 2 and 6 dose not consider corners like 0 and 8 is beacuse the cell select algorithm below removes them by selecting the largest of all avilable corners.
+            # For example, (2, 7), the ideal is 0 or 8 - 8 will be chosen. For (6, 1), the ideal is 0 or 8 - 8 will be chosen.
 
-            # Remove unsafe corners based on the dangerous patterns
-            for (o_pos, x_pos), corners_to_remove in dangerous_patterns.items():
-                if board[o_pos] == 'O' and board[x_pos] == 'X':
-                    safe_corners = [corner for corner in safe_corners if corner not in corners_to_remove]
+            # Iterate over each dangerous pattern to check if any unsafe corners should be removed
+            for (o_pos, x_pos), unsafe_corners in dangerous_patterns.items():
+                if board[o_pos] == 'O' and board[x_pos] == 'X': # Check if the current board configuration matches the dangerous pattern i.e., if 'O' is in the position o_pos and 'X' is in the position x_pos
+                    safe_corners = [corner for corner in safe_corners if corner not in unsafe_corners] # If the pattern is matched, remove corners listed in unsafe_corners from the list of safe corners
 
             return safe_corners  
 
         def get_opposing_corner() -> int:
-            # Define opposing corner pairs
+            """ Checks the corners to find out if there is an 'O' present in any of them. If found,
+                it returns the corner that is directly opposite to it. This is useful when 'X' is placed at the center cell
+                on the 2nd move - as the ideal strategy is to choose the opposing cell, making 'OXO' diagonally
+            """
+            # Define a mapping of corners to their opposing corners
+            # position of 'O': corners directly opposite
             opposing_corners = {0: 8, 2: 6, 6: 2, 8: 0}
 
-            # Look for O in any of the corners and return the opposing corner
+            # Iterate through each corner and its corresponding opposite corner
             for corner, opposite in opposing_corners.items():
                 if board[corner] == 'O':
                     return opposite
-
-            # If no O is found in corners or X is not at 4, return None or some indication
+                
             return None
-        
-        def find_missing_elements(combinations, elements):
-            # Convert the provided elements to a set
-            elements_set = set(elements)
-
-            # Track missing elements
+                
+        def find_missing_elements(combinations, elements) -> set:
+            """ Evaluate each combination to determine which elements are present in the combination but not in the 
+                provided set of elements. It is useful for finding single gaps in cells which are either to be blocked or attacked.
+            """
             missing_elements = set()
 
-            # Check each combination
             for combo in combinations:
-                # Count how many provided elements are in the current combination
-                common_elements = elements_set.intersection(combo)
+                common_elements = elements.intersection(combo) # Find the intersection of the current combination with the set of provided elements
 
-                # If at least two of the provided elements are present in the combination
+                # If at least two elements from the provided set are present in the combination, identify the element and update the set
                 if len(common_elements) >= 2:
-                    # Determine which elements from the combination are not in the provided elements
-                    missing_elements.update(combo - elements_set)
+                    missing_elements.update(combo - elements)
 
             return missing_elements
         
-        def find_winning_moves(win_comb, o_moves, all_moves):
-            all_cells = set(range(9))
-            empty_cells = all_cells - set(all_moves)
+        def find_winning_moves(win_comb, o_moves, all_moves) -> set:
+            """ Analyzes each combination of cells that may lead to a win. It checks if exactly one 'O' is present
+                in the combination and if the combination contains exactly two empty cells. If both conditions are met, the function 
+                considers the empty cells as potential winning moves for 'O' but not necessarily the final one. 
+            """
             potential_moves = set()
+            all_cells = set(range(9))
+
+            # Determine the set of empty cells by subtracting the occupied cells from the full set
+            empty_cells = all_cells - set(all_moves)
             
             for combo in win_comb:
+                # Find the intersection of the current combination with the cells occupied by 'O'
                 o_in_combo = combo.intersection(o_moves)
+
+                # Find the intersection of the current combination with the empty cells
                 empty_in_combo = combo.intersection(empty_cells)
+                
+                # If exactly one 'O' is in the combination and exactly two cells are empty, add the empty cells to the set of potential winning moves
                 if len(o_in_combo) == 1 and len(empty_in_combo) == 2:
                     potential_moves.update(empty_in_combo)
+
             return potential_moves
         
-        win_comb = [
-                {0, 1, 2}, {3, 4, 5}, {6, 7, 8},  # Rows
-                {0, 3, 6}, {1, 4, 7}, {2, 5, 8},  # Columns
-                {0, 4, 8}, {2, 4, 6}  # Diagonals
-            ]
+        def find_threes(X_pos) -> set:
+            """ Determines which corners to be blocked for making a two-way win condition based on the current positions of 'X'. 
+                It does so by checking for specific pairs of positions occupied by 'X' and mapping them to corresponding safe corners. 
+            """
+            found_corners = set()
 
-        X_pos = {pos for pos in played if board[pos] == 'X'} # Iterate over each position in the global played set -> Check if the board position is occupied by 'X' -> Add the position to the X_pos set
+            # Define a mapping of specific pairs of positions to their corresponding safe corner
+            pattern = {
+                (1, 3): 0, (3, 1): 0,  # Pair (1, 3) or (3, 1) maps to corner 0...so on
+                (1, 5): 2, (5, 1): 2,  
+                (3, 7): 6, (7, 3): 6,  
+                (5, 7): 8, (7, 5): 8   
+            }   
+            
+            # Convert the tuple of positions to a sorted list of unique positions
+            unique_positions = sorted(X_pos)          
+            
+            # Check all pairs of positions from unique_positions
+            for i in range(len(unique_positions)):
+                for j in range(i + 1, len(unique_positions)):
+                    pair = (unique_positions[i], unique_positions[j])
+
+                    # Check if this pair matches any pattern
+                    corner = pattern.get(pair)
+                    if corner != None: found_corners.add(corner)
+        
+            return found_corners
+
+        ai = None
+
+        # Define all possible winning combinations on the board
+        win_comb = [
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8},  # Horizontal rows
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8},  # Vertical columns
+            {0, 4, 8}, {2, 4, 6}  # Diagonals
+        ]
+
+        # Identify positions occupied by 'X' and 'O' from the set of played positions
+        X_pos = {pos for pos in played if board[pos] == 'X'}
         O_pos = {pos for pos in played if board[pos] == 'O'}
 
-        block = find_missing_elements(win_comb, X_pos)
+        # Determine moves needed to block 'X' from winning or to complete a winning combination for 'O'
+        block = find_missing_elements(win_comb, X_pos)  # Moves to block 'X'
+        finish = find_missing_elements(win_comb, O_pos)  # Moves to complete 'O'
+
+        # Determine moves that have the potencial of making a winning combination for 'O'
         attack = find_winning_moves(win_comb, O_pos, played)
-        finish = find_missing_elements(win_comb, O_pos)
-        user = None
-        
-        # When 'O' plays first
-        if len(played) == 0: user = random.choice([0, 2, 6, 8]) 
-        
-        # If X places 'X' at the cente after first move, target the opposing corner.
-        elif len(played) == 2 and board[4] == 'X': user = get_opposing_corner()
 
-        # If X places 'X' at the cente after first move, target the opposing corner.
-        elif len(played) == 4 and board[4] != 'X': user = 4
+        # Find corners that are ideally played under certain circumstances
+        safe_corners = get_safe_corners()
 
+        # Identify potential moves that can create a two-way win situation for 'X'
+        two_way = find_threes(X_pos)
+
+        # -----Decision-making process for the Computer's move-----
+        # If the Computer Starts:
+
+        # 1. Take the Corner:
+        #    - If the User Responds with the Center:
+        #      - Take the diagonally opposite corner.
+        #      - Continue defending to force a draw or capitalize on any mistakes to win.
+        #    - If the User Responds with Anything Other Than the Center:
+        #      - This leads to a guaranteed win. Take the corner that is not diagonal but has the user’s cell in between to force them to block the space in between.
+        #      - Take the center, setting up a two-way winning scenario.
+
+        # If the User Starts:
+
+        # 1. If the User Starts with the Center:
+        #    - Take any corner.
+        #    - Continue defending to force a draw or win if the user makes a mistake.
+
+        # 2. If the User Starts with a Non-Center Move:
+        #    - Take the center.
+        #    - Continue defending to force a draw or win if the user makes a mistake.
+
+        # 3. Blocking a Two-Way Winning Scenario:
+        #    - If the user plays two edge moves and takes a corner on their third move, this could create a two-way winning possibility. This must be blocked.
+
+        # ---When 'O' plays first---
+
+        # Play any of the four corners
+        if len(played) == 0:
+            ai = random.choice([0, 2, 6, 8])  
+
+        # If 'X' has played the center, choose an opposing corner on the second move
+        elif len(played) == 2 and board[4] == 'X':
+            ai = get_opposing_corner()
+
+        # If 'X' has not played the center by the fourth move, play the center
+        elif len(played) == 4 and board[4] != 'X':
+            ai = 4
+
+        # If the center is occupied or if the game is in other specific states, prioritize moves from
+        # 1. Finishing the game
+        # 2. Blocking the opponents finishing move
+        # 3. Playing the optimal corners
+        # 4. Playing any possible cells with one 'O' and two empty spaces.
+        # 5. Playing any left-over cells
+        elif (len(played) == 2 and board[4] != 'X') or (len(played) == 4 and board[4] == 'X') or len(played) in {6, 8}:
+            for moves in [finish, block, safe_corners, attack]:
+                if ai == None:
+                    for i in sorted(moves):
+                        if board[i] == ' ':
+                            ai = i
+                            break
+
+            if ai == None: ai = random.choice([i for i in range(9) if board[i] == ' '])  # Random move if no other move is available
+
+        # ---When 'X' plays first---
+        # If 'X' plays the center, play any one of the four corners
+        elif len(played) == 1 and board[4] == 'X':
+            ai = random.choice(get_safe_corners())
+
+        # If 'X' plays a corner or edge, play the center
+        elif len(played) == 1 and board[4] != 'X':
+            ai = 4
+
+        # If the game is in other specific states, prioritize moves from
+        # 1. Finishing the game
+        # 2. Blocking the opponents finishing move
+        # 3. Blocking any possible two-ways to be formed
+        # 4. Playing any possible cells with one 'O' and two empty spaces.
+        # 5. Playing any left-over cells
         else:
-            if bool(finish):
-                for index in sorted(finish):
-                    if board[index] == ' ':
-                        user = index
-                        break  # Stop once a valid move is found
+            for moves in [finish, block, two_way, attack]:
+                if ai == None:
+                    for i in sorted(moves):
+                        if board[i] == ' ':
+                            ai = i
+                            break
 
-            if user is None and bool(block):
-                for index in sorted(block):
-                    if board[index] == ' ':
-                        user = index
-                        break  
+            if ai == None: ai = random.choice([i for i in range(9) if board[i] == ' '])  # Random move if no other move is available
 
-            if user is None:
-                safe_corners = get_safe_corners()
-                if safe_corners:
-                    for index in safe_corners:
-                        if board[index] == ' ':
-                            user = index
-                            break  
-
-            if user is None and bool(attack):
-                for index in sorted(attack):
-                    if board[index] == ' ':
-                        user = index
-                        break
-
-            if user is None:
-                user = random.choice([i for i in range(9) if board[i] == ' '])
-                   
-        print("Computer chose cell", user)
-        board[user] = 'O'
-        played.add(user)
+        print("Computer chose cell", ai) 
+        board[ai] = 'O' 
+        played.add(ai) 
         break
 
-    printBoard()  # Show the updated board
+    printBoard()
 
 def hasWon(who: str) -> bool:
     """ returns True if who (being passed 'X' or 'O') has won, False otherwise 
@@ -203,15 +299,10 @@ def hasWon(who: str) -> bool:
     who_pos = set()  # Initialize an empty set to hold positions for 'who'
 
     win_comb = [
-        {0, 1, 2},  # Top row
-        {3, 4, 5},  # Middle row
-        {6, 7, 8},  # Bottom row
-        {0, 3, 6},  # Left column
-        {1, 4, 7},  # Middle column
-        {2, 5, 8},  # Right column
-        {0, 4, 8},  # Diagonal from top-left to bottom-right
-        {2, 4, 6}   # Diagonal from top-right to bottom-left
-    ]
+            {0, 1, 2}, {3, 4, 5}, {6, 7, 8},  # Rows
+            {0, 3, 6}, {1, 4, 7}, {2, 5, 8},  # Columns
+            {0, 4, 8}, {2, 4, 6}  # Diagonals
+            ]
 
     for pos in played:  # Iterate over each position in the global played set
         if board[pos] == who:   # Check if the board position is occupied by 'who'
@@ -244,58 +335,18 @@ def terminate(who: str) -> bool:
 
 if __name__ == "__main__": 
     init()
-    # if random.randrange(2) == 1:        # Random draw (50-50) to decide whether the gamer starts first or the computer starts first.
-    #     print("Player X starts first")
-    # while True:
-    #     playerNextMove()            # X starts first
-    #     if(terminate('X')): break   # if X won or a draw, print message and terminate
-    #     computerNextMove()          # computer plays O
-    #     if(terminate('O')): break   # if O won or a draw, print message and terminate
-    # else:
-    #   print("Player O starts first")
-    while True:
-        computerNextMove()          # O starts first
-        if(terminate('O')): break   # if O won or a draw, print message and terminate
-        playerNextMove()            # user plays X
-        if(terminate('X')): break   # if X won or a draw, print message and terminate
 
-
-
-
-        # #if center, first corner and block
-        # elif len(played) == 1 and board[4] == 'X':
-        #     user = random.choice(get_safe_corners())
-
-        # else:
-        #     if bool(attack) and board[sorted(attack)[0]] == ' ':
-        #         user = sorted(attack)[0]
-        #     elif bool(block) and board[sorted(block)[0]] == ' ':
-        #         user = sorted(block)[0]
-        #     else:
-        #         safe_corners = get_safe_corners()
-        #         if safe_corners:
-        #             user = random.choice(safe_corners)
-        #         else:
-        #             empty_sides = get_empty_sides()
-        #             if empty_sides:
-        #                 user = random.choice(empty_sides)
-        #             else:
-        #                 user = random.choice([i for i in range(9) if board[i] == ' '])
-        
-        #         # When 'X' plays first and choses corner for an edge, target the center
-        # if len(played) == 1 and board[4] != 'X':
-        #     ai = 4
-            
-        # # Continue playing the edge unless there is a need to block
-        # elif len(played) > 1 and board[4] != 'X':
-        #     if bool(attack) and board[sorted(attack)[0]] == ' ':
-        #         ai = sorted(attack)[0]
-        #     elif bool(block) and board[sorted(block)[0]] == ' ':
-        #         ai = sorted(block)[0]
-        #     else:
-        #         while True:
-        #             ai = random.choice([1, 3, 5, 7])
-        #             if board[(ai)] == ' ':
-        #                 break
-        #             else:
-        #                 ai = random.choice([1, 3, 5, 7])
+    if random.randrange(2) == 1:        # Random draw (50-50) to decide whether the user starts first or the computer starts first.
+        print("Player X starts first")
+        while True:
+            playerNextMove()            # X starts first
+            if(terminate('X')): break   # if X won or a draw, print message and terminate
+            computerNextMove()          # computer plays O
+            if(terminate('O')): break   # if O won or a draw, print message and terminate
+    else:
+        print("Player O starts first")
+        while True:
+            computerNextMove()          # O starts first
+            if(terminate('O')): break   # if O won or a draw, print message and terminate
+            playerNextMove()            # user plays X
+            if(terminate('X')): break   # if X won or a draw, print message and terminate
