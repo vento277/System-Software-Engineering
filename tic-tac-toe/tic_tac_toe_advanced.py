@@ -112,9 +112,6 @@ def computerNextMove() -> None:
 
             # If no O is found in corners or X is not at 4, return None or some indication
             return None
-
-        def get_empty_sides() -> None:
-            return [i for i in [1, 3, 5, 7] if board[i] == ' ']
         
         def find_missing_elements(combinations, elements):
             # Convert the provided elements to a set
@@ -132,11 +129,21 @@ def computerNextMove() -> None:
                 if len(common_elements) >= 2:
                     # Determine which elements from the combination are not in the provided elements
                     missing_elements.update(combo - elements_set)
-                else:
-                    pass
 
             return missing_elements
-
+        
+        def find_winning_moves(win_comb, o_moves, all_moves):
+            all_cells = set(range(9))
+            empty_cells = all_cells - set(all_moves)
+            potential_moves = set()
+            
+            for combo in win_comb:
+                o_in_combo = combo.intersection(o_moves)
+                empty_in_combo = combo.intersection(empty_cells)
+                if len(o_in_combo) == 1 and len(empty_in_combo) == 2:
+                    potential_moves.update(empty_in_combo)
+            return potential_moves
+        
         win_comb = [
                 {0, 1, 2}, {3, 4, 5}, {6, 7, 8},  # Rows
                 {0, 3, 6}, {1, 4, 7}, {2, 5, 8},  # Columns
@@ -153,32 +160,59 @@ def computerNextMove() -> None:
                 O_pos.add(pos)    # Add the position to the X_pos set
 
         block = find_missing_elements(win_comb, X_pos)
-        attack = find_missing_elements(win_comb, O_pos)
+        attack = find_winning_moves(win_comb, O_pos, played)
+        final_attack = find_missing_elements(win_comb, O_pos)
+        
 
         # When 'O' plays first
         if len(played) == 0:
             user = random.choice([0, 2, 6, 8])
         
         # If X places 'X' at the cente after first move, target the opposing corner.
-        elif len(played) == 2 and board[4] == 'X':
+        if len(played) == 2 and board[4] == 'X':
             user = get_opposing_corner()
-        
-        # If X places 'X' anywhere else, target the adjecent corners.
         else:
-            if bool(attack) and board[sorted(attack)[0]] == ' ': ## need to fix this
-                user = sorted(attack)[0]
-            elif bool(block) and board[sorted(block)[0]] == ' ':
-                user = sorted(block)[0]
+            state = 1
+
+        # If X places 'X' at the cente after first move, target the opposing corner.
+        if len(played) == 4 and board[4] != 'X':
+            user = 4
+        else:
+            state = 1
+
+        if len(played) == 4 and board[4] == 'X':
+            state = 1
+        elif len(played) == 6 or 8:
+            state = 1
+
+        if state == 1:
+            # Block cells with probablility of winning.
+            if bool(final_attack):
+                for i in range(len(final_attack)):
+                    if board[sorted(final_attack)[i]] == ' ':
+                        user = sorted(final_attack)[i]
+                        flag = 0
             else:
+                flag = 1
+            
+            if bool(block):
+                for i in range(len(block)):
+                    if board[sorted(block)[i]] == ' ':
+                        user = sorted(block)[i]
+                        flag = 0
+            else:
+                flag = 1
+
+            if flag == 1:
                 safe_corners = get_safe_corners()
                 if safe_corners:
                     user = random.choice(safe_corners)
+                elif bool(attack):
+                    for i in range(len(attack)):
+                        if board[sorted(attack)[i]] == ' ':
+                            user = sorted(attack)[i]
                 else:
-                    empty_sides = get_empty_sides()
-                    if empty_sides:
-                        user = random.choice(empty_sides)
-                    else:
-                        user = random.choice([i for i in range(9) if board[i] == ' '])
+                    user = random.choice([i for i in range(9) if board[i] == ' '])
 
         print("Computer chose cell", user)
         board[user] = 'O'
