@@ -9,7 +9,7 @@ board = [' '] * 9 # A list of 9 strings, one for each cell,
 played = set()    # A set to keep track of the played cells 
 
 def init() -> None:
-    """ prints the banner messages 
+    """ Prints the banner messages 
         and prints the intial board on the screen
     """
     print("Welcome to Tic-Tac-Toe!")
@@ -18,7 +18,7 @@ def init() -> None:
     printBoard()
 
 def printBoard() -> None:
-    """ prints the board on the screen based on the values in the board list 
+    """ Prints the board on the screen based on the values in the board list 
     """
     print() # Line break
 
@@ -36,7 +36,7 @@ def printBoard() -> None:
     print() # Line break
 
 def playerNextMove() -> None:
-    """ prompts the player for a valid cell number, 
+    """ Prompts the player for a valid cell number, 
         and prints the info and the updated board;
         error checks that the input is a valid cell number 
     """
@@ -61,7 +61,7 @@ def playerNextMove() -> None:
     printBoard()  # Show the updated board
 
 def computerNextMove() -> None:
-    """ computer randomly chooses a valid cell, 
+    """ Computer randomly chooses a valid cell, 
         and prints the info and the updated board 
     """
     while True:
@@ -208,28 +208,38 @@ def computerNextMove() -> None:
         two_way = find_threes(X_pos)
 
         # -----Decision-making process for the Computer's move-----
-        # If the Computer Starts:
+        # Terms:
+        #   - Corners = 0, 2, 6, 8
+        #   - Edges = 1, 3, 5, 7
 
+        # If the Computer Starts:
         # 1. Take the Corner:
-        #    - If the User Responds with the Center:
-        #      - Take the diagonally opposite corner.
-        #      - Continue defending to force a draw or capitalize on any mistakes to win.
-        #    - If the User Responds with Anything Other Than the Center:
-        #      - This leads to a guaranteed win. Take the corner that is not diagonal but has the user’s cell in between to force them to block the space in between.
-        #      - Take the center, setting up a two-way winning scenario.
+        #   a. If the User Responds with the Center:
+        #       - Take the diagonally opposite corner.
+        #       - Continue defending to force a draw or capitalize on any mistakes to win.
+        #   b. If the User Responds with Anything Other Than the Center:
+        #       - This leads to a guaranteed win. Take the corner that is not diagonal and does not have the user’s cell in between. This forces the user to block the edges
+        #       - Take the center, setting up a two-way winning scenario.
 
         # If the User Starts:
-
         # 1. If the User Starts with the Center:
-        #    - Take any corner.
-        #    - Continue defending to force a draw or win if the user makes a mistake.
+        #   - Take any corner.
+        #   - Continue defending to force a draw or win if the user makes a mistake.
 
         # 2. If the User Starts with a Non-Center Move:
-        #    - Take the center.
-        #    - Continue defending to force a draw or win if the user makes a mistake.
+        #   - Take the center.
+        #   - Continue defending to force a draw or win if the user makes a mistake.
 
         # 3. Blocking a Two-Way Winning Scenario:
-        #    - If the user plays two edge moves and takes a corner on their third move, this could create a two-way winning possibility. This must be blocked.
+        #   - If the user plays two edge moves, take the corner to block the two-way winning possibility
+        #   - Continue defending to force a draw or win if the user makes a mistake.
+
+        # In general, the priority of the computer's move, therefore, is:
+        #   1. Finish the game when possible
+        #   2. Block the opponents finishing move
+        #   3. Play the unique optimal strategy such as taking corners or blocking the possible formation of two-way wins
+        #   4. Play any possible cells with one 'O' and two empty cells
+        #   5. Play any left over-cells
 
         # ---When 'O' plays first---
 
@@ -245,12 +255,7 @@ def computerNextMove() -> None:
         elif len(played) == 4 and board[4] != 'X':
             ai = 4
 
-        # If the center is occupied or if the game is in other specific states, prioritize moves from
-        # 1. Finishing the game
-        # 2. Blocking the opponents finishing move
-        # 3. Playing the optimal corners
-        # 4. Playing any possible cells with one 'O' and two empty spaces.
-        # 5. Playing any left-over cells
+        # If the center is occupied or if the game is in other specific states, prioritize moves according to the comment above. 
         elif (len(played) == 2 and board[4] != 'X') or (len(played) == 4 and board[4] == 'X') or len(played) in {6, 8}:
             for moves in [finish, block, safe_corners, attack]:
                 if ai == None:
@@ -270,12 +275,7 @@ def computerNextMove() -> None:
         elif len(played) == 1 and board[4] != 'X':
             ai = 4
 
-        # If the game is in other specific states, prioritize moves from
-        # 1. Finishing the game
-        # 2. Blocking the opponents finishing move
-        # 3. Blocking any possible two-ways to be formed
-        # 4. Playing any possible cells with one 'O' and two empty spaces.
-        # 5. Playing any left-over cells
+        # If the game is in other specific states, prioritize moves prioritize moves according to the comment above.
         else:
             for moves in [finish, block, two_way, attack]:
                 if ai == None:
@@ -294,7 +294,7 @@ def computerNextMove() -> None:
     printBoard()
 
 def hasWon(who: str) -> bool:
-    """ returns True if who (being passed 'X' or 'O') has won, False otherwise 
+    """ Returns True if who (being passed 'X' or 'O') has won, False otherwise 
     """
     who_pos = set()  # Initialize an empty set to hold positions for 'who'
 
@@ -315,7 +315,7 @@ def hasWon(who: str) -> bool:
     return False
 
 def terminate(who: str) -> bool:
-    """ returns True if who (being passed 'X' or 'O') has won or if it's a draw, False otherwise;
+    """ Returns True if who (being passed 'X' or 'O') has won or if it's a draw, False otherwise;
         it also prints the final messages:
                 "You won! Thanks for playing." or 
                 "You lost! Thanks for playing." or 

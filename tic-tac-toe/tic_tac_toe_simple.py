@@ -9,7 +9,7 @@ board = [' '] * 9 # A list of 9 strings, one for each cell,
 played = set()    # A set to keep track of the played cells 
 
 def init() -> None:
-    """ prints the banner messages 
+    """ Prints the banner messages 
         and prints the intial board on the screen
     """
     print("Welcome to Tic-Tac-Toe!")
@@ -18,7 +18,7 @@ def init() -> None:
     printBoard()
 
 def printBoard() -> None:
-    """ prints the board on the screen based on the values in the board list 
+    """ Prints the board on the screen based on the values in the board list 
     """
     print() # Line break
 
@@ -36,7 +36,7 @@ def printBoard() -> None:
     print() # Line break
 
 def playerNextMove() -> None:
-    """ prompts the player for a valid cell number, 
+    """ Prompts the player for a valid cell number, 
         and prints the info and the updated board;
         error checks that the input is a valid cell number 
     """
@@ -61,7 +61,7 @@ def playerNextMove() -> None:
     printBoard()  # Show the updated board
 
 def computerNextMove() -> None:
-    """ computer randomly chooses a valid cell, 
+    """ Computer randomly chooses a valid cell, 
         and prints the info and the updated board 
     """
     while True:
@@ -81,7 +81,7 @@ def computerNextMove() -> None:
     printBoard()  # Show the updated board
 
 def hasWon(who: str) -> bool:
-    """ returns True if who (being passed 'X' or 'O') has won, False otherwise 
+    """ Returns True if who (being passed 'X' or 'O') has won, False otherwise 
     """
     who_pos = set()  # Initialize an empty set to hold positions for 'who'
 
@@ -102,7 +102,7 @@ def hasWon(who: str) -> bool:
     return False
 
 def terminate(who: str) -> bool:
-    """ returns True if who (being passed 'X' or 'O') has won or if it's a draw, False otherwise;
+    """ Returns True if who (being passed 'X' or 'O') has won or if it's a draw, False otherwise;
         it also prints the final messages:
                 "You won! Thanks for playing." or 
                 "You lost! Thanks for playing." or 
