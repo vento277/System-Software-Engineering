@@ -65,45 +65,38 @@ def computerNextMove() -> None:
         and prints the info and the updated board 
     """
     while True:
+
         def get_safe_corners() -> list:
             safe_corners = []
 
             # Add corners based on the absence of 'X' in specific positions
-            if board[1] != 'X':
-                safe_corners.extend([0, 2])
-            if board[3] != 'X':
-                safe_corners.extend([0, 6])
-            if board[5] != 'X':
-                safe_corners.extend([2, 8])
-            if board[7] != 'X':
-                safe_corners.extend([6, 8])
+            if board[1] != 'X': safe_corners.extend([0, 2])
+            if board[3] != 'X': safe_corners.extend([0, 6])
+            if board[5] != 'X': safe_corners.extend([2, 8])
+            if board[7] != 'X': safe_corners.extend([6, 8])
 
             # Convert list to a set to remove duplicates and keep only empty corners
             safe_corners = list(set(corner for corner in safe_corners if board[corner] == ' '))
 
             # Remove corners based on specific dangerous patterns
             dangerous_patterns = {
-                6: (8, 7),  # If 'O' is at 8 and 'X' is at 7, remove corner 6
-                0: (2, 1),  # If 'O' is at 2 and 'X' is at 1, remove corner 0
-                2: (0, 1),  # If 'O' is at 0 and 'X' is at 1, remove corner 2
-                8: (6, 7)   # If 'O' is at 6 and 'X' is at 7, remove corner 8
+                # If 'O' is at 0 and 'X' is at 1, remove corners 2 and 8...so on
+                (0, 1): [2, 8], (0, 3): [6, 8],    
+                (2, 1): [0, 8], (2, 5): [6, 8],
+                (6, 7): [8, 2], (6, 3): [0, 2],     
+                (8, 7): [0, 6], (8, 5): [0, 2],   
             }
 
             # Remove unsafe corners based on the dangerous patterns
-            for corner, (o_pos, x_pos) in dangerous_patterns.items():
-                if corner in safe_corners and board[o_pos] == 'O' and board[x_pos] == 'X':
-                    safe_corners.remove(corner)
+            for (o_pos, x_pos), corners_to_remove in dangerous_patterns.items():
+                if board[o_pos] == 'O' and board[x_pos] == 'X':
+                    safe_corners = [corner for corner in safe_corners if corner not in corners_to_remove]
 
-            return safe_corners     
+            return safe_corners  
 
         def get_opposing_corner() -> int:
             # Define opposing corner pairs
-            opposing_corners = {
-                0: 8,
-                2: 6,
-                6: 2,
-                8: 0
-            }
+            opposing_corners = {0: 8, 2: 6, 6: 2, 8: 0}
 
             # Look for O in any of the corners and return the opposing corner
             for corner, opposite in opposing_corners.items():
@@ -150,70 +143,53 @@ def computerNextMove() -> None:
                 {0, 4, 8}, {2, 4, 6}  # Diagonals
             ]
 
-        X_pos = set()
-        O_pos = set()
-        for pos in played:  # Iterate over each position in the global played set
-            if board[pos] == 'X':   # Check if the board position is occupied by 'X'
-                X_pos.add(pos)    # Add the position to the X_pos set
-        for pos in played:  # Iterate over each position in the global played set
-            if board[pos] == 'O':   # Check if the board position is occupied by 'X'
-                O_pos.add(pos)    # Add the position to the X_pos set
+        X_pos = {pos for pos in played if board[pos] == 'X'} # Iterate over each position in the global played set -> Check if the board position is occupied by 'X' -> Add the position to the X_pos set
+        O_pos = {pos for pos in played if board[pos] == 'O'}
 
         block = find_missing_elements(win_comb, X_pos)
         attack = find_winning_moves(win_comb, O_pos, played)
-        final_attack = find_missing_elements(win_comb, O_pos)
+        finish = find_missing_elements(win_comb, O_pos)
+        user = None
         
-
         # When 'O' plays first
-        if len(played) == 0:
-            user = random.choice([0, 2, 6, 8])
+        if len(played) == 0: user = random.choice([0, 2, 6, 8]) 
         
         # If X places 'X' at the cente after first move, target the opposing corner.
-        if len(played) == 2 and board[4] == 'X':
-            user = get_opposing_corner()
-        else:
-            state = 1
+        elif len(played) == 2 and board[4] == 'X': user = get_opposing_corner()
 
         # If X places 'X' at the cente after first move, target the opposing corner.
-        if len(played) == 4 and board[4] != 'X':
-            user = 4
+        elif len(played) == 4 and board[4] != 'X': user = 4
+
         else:
-            state = 1
+            if bool(finish):
+                for index in sorted(finish):
+                    if board[index] == ' ':
+                        user = index
+                        break  # Stop once a valid move is found
 
-        if len(played) == 4 and board[4] == 'X':
-            state = 1
-        elif len(played) == 6 or 8:
-            state = 1
+            if user is None and bool(block):
+                for index in sorted(block):
+                    if board[index] == ' ':
+                        user = index
+                        break  
 
-        if state == 1:
-            # Block cells with probablility of winning.
-            if bool(final_attack):
-                for i in range(len(final_attack)):
-                    if board[sorted(final_attack)[i]] == ' ':
-                        user = sorted(final_attack)[i]
-                        flag = 0
-            else:
-                flag = 1
-            
-            if bool(block):
-                for i in range(len(block)):
-                    if board[sorted(block)[i]] == ' ':
-                        user = sorted(block)[i]
-                        flag = 0
-            else:
-                flag = 1
-
-            if flag == 1:
+            if user is None:
                 safe_corners = get_safe_corners()
                 if safe_corners:
-                    user = random.choice(safe_corners)
-                elif bool(attack):
-                    for i in range(len(attack)):
-                        if board[sorted(attack)[i]] == ' ':
-                            user = sorted(attack)[i]
-                else:
-                    user = random.choice([i for i in range(9) if board[i] == ' '])
+                    for index in safe_corners:
+                        if board[index] == ' ':
+                            user = index
+                            break  
 
+            if user is None and bool(attack):
+                for index in sorted(attack):
+                    if board[index] == ' ':
+                        user = index
+                        break
+
+            if user is None:
+                user = random.choice([i for i in range(9) if board[i] == ' '])
+                   
         print("Computer chose cell", user)
         board[user] = 'O'
         played.add(user)
