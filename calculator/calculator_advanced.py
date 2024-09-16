@@ -16,26 +16,35 @@ class Rational:
             add, subtract, multiply and divide
             toString
     """
-    def __init__(self, numerator: int, denominator: int) -> None:
+    def __init__(self, flag, numerator: int, denominator: int) -> None:
         """initizer stores the rational number in the lowest form""" 
         def greatestCommonDivisor(n: int, d: int):
-            """inner function for the greatest common divisor calculation"""
-            n1 = abs(n)
-            d1 = abs(d)
-            result = 1
-            k=1
-            while k <= n1 and k <= d1:
-                if n1 % k == 0 and d1 % k == 0:
-                    result = k
-                k += 1
-            return result
+            if flag == 1:
+                """inner function for the greatest common divisor calculation"""
+                n1 = abs(n)
+                d1 = abs(d)
+                result = 1
+                k=1
+                while k <= n1 and k <= d1:
+                    if n1 % k == 0 and d1 % k == 0:
+                        result = k
+                    k += 1
+                return result
+            else:
+                return 1
         #rational number must be in the lowest form 
         gcd: int = greatestCommonDivisor(numerator, denominator)
-        #numerator stores the sign of the rational
-        signFactor: int = 1 if denominator > 0 else -1
-        self.numerator = signFactor * numerator // gcd
-        self.denominator = abs(denominator) // gcd
-    
+        
+
+        if flag == 1:
+            signFactor: int = 1 if denominator > 0 else -1 #numerator stores the sign of the rational
+            self.numerator = signFactor * numerator // gcd
+            self.denominator = abs(denominator) // gcd
+
+        else:
+            self.numerator = numerator 
+            self.denominator = denominator 
+
     def add(self, secondRational):
         """adds 'this' rational to secondRational
            returns the result as a rational number (type Rational)
@@ -43,7 +52,7 @@ class Rational:
         # r1 = a/b r2 = c/d; r1 + r2 = [(a*d) + (b*c)] / (b*d) 
         numerator  = ((self.numerator * secondRational.denominator) + (self.denominator * secondRational.numerator))
         denominator = (self.denominator * secondRational.denominator)
-        number = Rational(numerator, denominator) # return the result as type Rational
+        number = Rational(1, numerator, denominator) # return the result as type Rational
         return number
     
     def subtract(self, secondRational):
@@ -53,7 +62,7 @@ class Rational:
         # r1 = a/b r2 = c/d; r1 + r2 = [(a*d) - (b*c)] / (b*d) 
         numerator  = ((self.numerator * secondRational.denominator) - (self.denominator * secondRational.numerator))
         denominator = (self.denominator * secondRational.denominator)
-        number = Rational(numerator, denominator) # return the result as type Rational
+        number = Rational(1, numerator, denominator) # return the result as type Rational
         return number
 
     def multiply(self, secondRational):
@@ -63,7 +72,7 @@ class Rational:
         # r1 = a/b r2 = c/d; r1 + r2 = (a*c) / (b*d) 
         numerator  = (self.numerator * secondRational.numerator)
         denominator = (self.denominator * secondRational.denominator)
-        number = Rational(numerator, denominator) # return the result as type Rational
+        number = Rational(1, numerator, denominator) # return the result as type Rational
         return number
 
     def divide(self, secondRational):
@@ -73,7 +82,7 @@ class Rational:
         # r1 = a/b r2 = c/d; r1 + r2 = (a*d) / (b*c) 
         numerator  = (self.numerator * secondRational.denominator)
         denominator = (self.denominator * secondRational.numerator)
-        number = Rational(numerator, denominator) # return the result as type Rational
+        number = Rational(1, numerator, denominator) # return the result as type Rational
         return number
 
     def toString(self):
@@ -95,24 +104,54 @@ class Rational:
             else:
                 return str(self.numerator) + "/" + str(self.denominator) # For all other cases, return the fraction in the format "numerator/denominator"
 
-class Imaginary:
-    """ this class implements the imaginary number type 
-        it stores the imaginary number
-        two data fields: 
-            real and imaginary
-        Operation: 
-            add, subtract, multiply and divide
-            toString
-    """
-    
+
     def addComplex(self, secondImaginary):
-        pass
+        # a = x+yi b = u+vi; (x+u) + (y+v)i
+        real = round(self.numerator + secondImaginary.numerator,3)
+        imag = round(self.denominator + secondImaginary.denominator,3)
+        number = Rational(0, real, imag) # return the result as type Rational
+        return number
+    
     def substractComplex(self, secondImaginary):
-        pass
+        # a = x-yi b = u-vi; (x+u) - (y+v)i
+        real = round(self.numerator - secondImaginary.numerator,3)
+        imag = round(self.denominator - secondImaginary.denominator,3)
+        number = Rational(0, real, imag) # return the result as type Rational
+        return number
+    
     def multiplyComplex(self, secondImaginary):
-        pass
+        # a = (xu)+(yv)i b = (xv)+(yu)i; (x+u) * (y+v)i
+        real = round((self.numerator * secondImaginary.numerator) - (self.denominator * secondImaginary.denominator),3)
+        imag = round((self.numerator * secondImaginary.denominator) + (self.denominator * secondImaginary.numerator),3)
+        number = Rational(0, real, imag) # return the result as type Rational
+        return number
+    
     def divideComplex(self, secondImaginary):
-        pass
+        # a = x+yi b = u+vi; (x+u) + (y+v)i
+        try:
+            real = round(((self.numerator * secondImaginary.numerator) + (self.denominator * secondImaginary.denominator)) / ((secondImaginary.numerator)**2 + (secondImaginary.denominator**2)),3)
+            imag = round(((self.denominator * secondImaginary.numerator) - (self.numerator * secondImaginary.denominator)) / ((secondImaginary.numerator)**2 + (secondImaginary.denominator**2)),3)
+        except ZeroDivisionError:
+            print("No division can be performed")
+
+        number = Rational(0, real, imag) # return the result as type Rational
+        return number
+    
+    def toStringComplex(self):
+        """ returns a string representation of 'this' rational
+            the format is: numerator/denominator
+            if 'this' rational is an integer, it must not show any denominator 
+            if denominator is 0, it just returns "NaN" (not a number)
+        """ 
+        if self.numerator == 0 and self.denominator == 0:
+            return '0.0'
+        elif self.numerator == 0:
+            return str(self.denominator) + 'i'
+        elif self.denominator == 0:
+            return str(self.numerator)
+        elif self.denominator < 0:
+            return str(self.numerator) + str(self.denominator) + 'i'
+        return str(self.numerator) + '+' + str(self.denominator) + 'i'
 
 class GUI:
     """ this class implements the GUI for our program
@@ -235,46 +274,52 @@ class GUI:
     # 
 
     def addComplex(self):
-        (imaginary1, imaginary2) = self.getBothRational()
-        result = imaginary1.divide(imaginary2)
-        self.result.set(result.toString())
+        (imaginary1, imaginary2) = self.getBothImaginary()
+        complexResult = imaginary1.addComplex(imaginary2)
+        self.complexResult.set(complexResult.toStringComplex())
 
     def subtractComplex(self):
-        (imaginary1, imaginary2) = self.getBothRational()
-        result = imaginary1.divide(imaginary2)
-        self.result.set(result.toString())
+        (imaginary1, imaginary2) = self.getBothImaginary()
+        complexResult = imaginary1.substractComplex(imaginary2)
+        self.complexResult.set(complexResult.toStringComplex())
 
     def multiplyComplex(self):
-        (imaginary1, imaginary2) = self.getBothRational()
-        result = imaginary1.divide(imaginary2)
-        self.result.set(result.toString())
+        (imaginary1, imaginary2) = self.getBothImaginary()
+        complexResult = imaginary1.multiplyComplex(imaginary2)
+        self.complexResult.set(complexResult.toStringComplex())
 
     def divideComplex(self):
-        (imaginary1, imaginary2) = self.getBothRational()
-        result = imaginary1.divide(imaginary2)
-        self.result.set(result.toString())
+        (imaginary1, imaginary2) = self.getBothImaginary()
+        complexResult = imaginary1.divideComplex(imaginary2)
+        self.complexResult.set(complexResult.toStringComplex())
 
     def getBothRational(self):
         """ Helper method used by add, subtract, multiply and divide methods"""
         try:
             numerator1 = eval(self.rational1Numerator.get())
             denominator1 = eval(self.rational1Denominator.get())
-            rational1 = Rational(numerator1, denominator1)
+            rational1 = Rational(1, numerator1, denominator1)
 
             numerator2 = eval(self.rational2Numerator.get())
             denominator2 = eval(self.rational2Denominator.get())
-            rational2 = Rational(numerator2, denominator2)
+            rational2 = Rational(1, numerator2, denominator2)
             return (rational1, rational2)
         except:
-            return(Rational(0,0), Rational(0,0)) #if an entry value is missing, cause NaN
+            return(Rational(1,0,0), Rational(1,0,0)) #if an entry value is missing, cause NaN
 
+    #
     def getBothImaginary(self):
         """ Helper method used by addComplex, subtractComplex, multiplyComplex and divideComplex methods"""
         try: 
             real1 = eval(self.complex1Real.get())
             imag1 = eval(self.complex1Imag.get())
-            number1 = Imaginary(real1, imag1)
+            imaginary1 = Rational(0, real1, imag1)
+
+            real2 = eval(self.complex2Real.get())
+            imag2 = eval(self.complex2Imag.get())
+            imaginary2 = Rational(0, real2, imag2)
+            return (imaginary1, imaginary2)
         except:
-            return(Imaginary(0,0), Imaginary(0,0))
+            return(Rational(0,0,0), Rational(0,0,0))
             
 if __name__ == "__main__": GUI() 
