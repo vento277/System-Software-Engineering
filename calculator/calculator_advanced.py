@@ -17,7 +17,10 @@ class Rational:
             toString
     """
     def __init__(self, flag, numerator: int, denominator: int) -> None:
-        """initizer stores the rational number in the lowest form""" 
+        """initizer stores the rational number in the lowest form.
+           A flag has been added to process negatives and inputs for the 
+           imaginary number calculation.
+        """ 
         def greatestCommonDivisor(n: int, d: int):
             if flag == 1:
                 """inner function for the greatest common divisor calculation"""
@@ -33,15 +36,18 @@ class Rational:
             else:
                 return 1
         #rational number must be in the lowest form 
-        gcd: int = greatestCommonDivisor(numerator, denominator)
         
+        gcd: int = greatestCommonDivisor(numerator, denominator)
+        self.flag = flag # Store the flag value
 
         if flag == 1:
+            # If flag is 1, adjust the sign and reduce the rational number
             signFactor: int = 1 if denominator > 0 else -1 #numerator stores the sign of the rational
             self.numerator = signFactor * numerator // gcd
             self.denominator = abs(denominator) // gcd
 
         else:
+            # If flag is not 1, store the numerator and denominator as is
             self.numerator = numerator 
             self.denominator = denominator 
 
@@ -104,8 +110,13 @@ class Rational:
             else:
                 return str(self.numerator) + "/" + str(self.denominator) # For all other cases, return the fraction in the format "numerator/denominator"
 
+    #---Replica functions from above have been added for the complex number operation---
 
     def addComplex(self, secondImaginary):
+        """adds 'this' imaginary to secondImaginary
+           returns the result as a imaginary number (type Rational).
+           Additionally, round the result to 3 decimal places.
+        """  
         # a = x+yi b = u+vi; (x+u) + (y+v)i
         real = round(self.numerator + secondImaginary.numerator,3)
         imag = round(self.denominator + secondImaginary.denominator,3)
@@ -113,6 +124,10 @@ class Rational:
         return number
     
     def substractComplex(self, secondImaginary):
+        """subtracts secondImaginary from 'this' imaginary to 
+           returns the result as a imaginary number (type Rational).
+           Additionally, round the result to 3 decimal places.
+        """ 
         # a = x-yi b = u-vi; (x+u) - (y+v)i
         real = round(self.numerator - secondImaginary.numerator,3)
         imag = round(self.denominator - secondImaginary.denominator,3)
@@ -120,38 +135,54 @@ class Rational:
         return number
     
     def multiplyComplex(self, secondImaginary):
-        # a = (xu)+(yv)i b = (xv)+(yu)i; (x+u) * (y+v)i
+        """multiplies 'this' imaginary to secondImaginary
+           returns the result as a imaginary number (type Rational).
+           Additionally, round the result to 3 decimal places.
+        """ 
+        # a = x-yi b = u-vi; (x*u-y*v) + (x*v+y*u)i
         real = round((self.numerator * secondImaginary.numerator) - (self.denominator * secondImaginary.denominator),3)
         imag = round((self.numerator * secondImaginary.denominator) + (self.denominator * secondImaginary.numerator),3)
         number = Rational(0, real, imag) # return the result as type Rational
         return number
     
     def divideComplex(self, secondImaginary):
-        # a = x+yi b = u+vi; (x+u) + (y+v)i
-        try:
+        """divides 'this' imaginary by secondImaginary
+           returns the result as a imaginary number (type Rational).
+           Additionally, round the result to 3 decimal places.
+        """ 
+        # a = x-yi b = u-vi; ((x*u+y*v) / (u^2+v^2)) + ((y*u-x*v) / (u^2+v^2))i
+        try: 
             real = round(((self.numerator * secondImaginary.numerator) + (self.denominator * secondImaginary.denominator)) / ((secondImaginary.numerator)**2 + (secondImaginary.denominator**2)),3)
             imag = round(((self.denominator * secondImaginary.numerator) - (self.numerator * secondImaginary.denominator)) / ((secondImaginary.numerator)**2 + (secondImaginary.denominator**2)),3)
+            number = Rational(0, real, imag) # return the result as type Rational
         except ZeroDivisionError:
-            print("No division can be performed")
-
-        number = Rational(0, real, imag) # return the result as type Rational
+            real = 0
+            imag = 0
+            number = Rational(2, real, imag) # Return the result as type Rational, initializing the flag to 2 to handle NaN when division is not possible. For example, division is invalid when b is 0.
+            
         return number
     
     def toStringComplex(self):
-        """ returns a string representation of 'this' rational
-            the format is: numerator/denominator
-            if 'this' rational is an integer, it must not show any denominator 
-            if denominator is 0, it just returns "NaN" (not a number)
+        """ returns a string representation of 'this' imaginary
+            the format is: (numerator)+(denominator)*i in float type with at most 3 decimal place. 
+            if 'this' imaginary is absent of either the real or imaginary part, it should only show where the number exists. For example,
+            if the result is 1i, it should not show 0+1i, instead show 1i only. 
         """ 
-        if self.numerator == 0 and self.denominator == 0:
-            return '0.0'
+        # Flag will be raised(2) when:
+        #   - the denominator of the imaginary division operation is 0
+        #   - the input is not a number or is empty
+        # which then the calculator will return "NaN" 
+        if self.flag == 2:
+            return 'NaN'
+        elif self.numerator == 0 and self.denominator == 0:
+            return '0.0' # Return 0 as a float if the result is 0. 
         elif self.numerator == 0:
-            return str(self.denominator) + 'i'
+            return str(float(self.denominator)) + 'i' # Return only the imaginary part if there is no real part in the result. 
         elif self.denominator == 0:
-            return str(self.numerator)
-        elif self.denominator < 0:
-            return str(self.numerator) + str(self.denominator) + 'i'
-        return str(self.numerator) + '+' + str(self.denominator) + 'i'
+            return str(float(self.numerator)) # Return only the real part if there is no imaginary part in the result. 
+        elif self.denominator < 0: 
+            return str(float(self.numerator)) + str(float(self.denominator)) + 'i' # Return the negatives without the brackets, for example, 1-i or -1-i.
+        return str(float(self.numerator)) + '+' + str(float(self.denominator)) + 'i' # Return the result in the format a+bi on all other cases. 
 
 class GUI:
     """ this class implements the GUI for our program
@@ -206,7 +237,10 @@ class GUI:
         Button(frame4, text="Multiply", command=self.multiply).pack(side=LEFT)
         Button(frame4, text="Divide", command=self.divide).pack(side=LEFT)
 
-        # The GUI has been updated to include an imaginary number calculator, which is now located beneath the previous calculator. New buttons have also been added.
+        
+        #---Replica functions for GUI from above have been added for the complex number operation---
+        # The GUI now has both the rational number calculator at the top and the imginary number calculator at the bottom.
+        # The user will be able to use both, without one's result being affect by another. 
 
         # New frames and entries for imaginary numbers
         frame5 = Frame(window)
@@ -271,27 +305,40 @@ class GUI:
         result = rational1.divide(rational2)
         self.result.set(result.toString())
 
-    # 
+    #---Replica functions from above have been added for the complex number operation---
+    # The flags are initiated at to ensure a proper input is entered. Input that is not a number (or empty) will raise the flag to 2, for which will return "NaN" 
 
     def addComplex(self):
         (imaginary1, imaginary2) = self.getBothImaginary()
-        complexResult = imaginary1.addComplex(imaginary2)
-        self.complexResult.set(complexResult.toStringComplex())
+        if imaginary1.flag == 2 or imaginary2.flag == 2:
+            self.complexResult.set('NaN')
+        else:
+            complexResult = imaginary1.addComplex(imaginary2)
+            self.complexResult.set(complexResult.toStringComplex())
 
     def subtractComplex(self):
         (imaginary1, imaginary2) = self.getBothImaginary()
-        complexResult = imaginary1.substractComplex(imaginary2)
-        self.complexResult.set(complexResult.toStringComplex())
+        if imaginary1.flag == 2 or imaginary2.flag == 2:
+            self.complexResult.set('NaN')
+        else:
+            complexResult = imaginary1.substractComplex(imaginary2)
+            self.complexResult.set(complexResult.toStringComplex())
 
     def multiplyComplex(self):
         (imaginary1, imaginary2) = self.getBothImaginary()
-        complexResult = imaginary1.multiplyComplex(imaginary2)
-        self.complexResult.set(complexResult.toStringComplex())
+        if imaginary1.flag == 2 or imaginary2.flag == 2:
+            self.complexResult.set('NaN')
+        else:
+            complexResult = imaginary1.multiplyComplex(imaginary2)
+            self.complexResult.set(complexResult.toStringComplex())
 
     def divideComplex(self):
         (imaginary1, imaginary2) = self.getBothImaginary()
-        complexResult = imaginary1.divideComplex(imaginary2)
-        self.complexResult.set(complexResult.toStringComplex())
+        if imaginary1.flag == 2 or imaginary2.flag == 2:
+            self.complexResult.set('NaN')
+        else:
+            complexResult = imaginary1.divideComplex(imaginary2)
+            self.complexResult.set(complexResult.toStringComplex())
 
     def getBothRational(self):
         """ Helper method used by add, subtract, multiply and divide methods"""
@@ -307,7 +354,8 @@ class GUI:
         except:
             return(Rational(1,0,0), Rational(1,0,0)) #if an entry value is missing, cause NaN
 
-    #
+    #---Replica functions from above have been added for the complex number operation---
+
     def getBothImaginary(self):
         """ Helper method used by addComplex, subtractComplex, multiplyComplex and divideComplex methods"""
         try: 
@@ -320,6 +368,6 @@ class GUI:
             imaginary2 = Rational(0, real2, imag2)
             return (imaginary1, imaginary2)
         except:
-            return(Rational(0,0,0), Rational(0,0,0))
+            return(Rational(2,0,0), Rational(2,0,0)) # if an entry is missing or invalid, raise the flag to 2. 
             
 if __name__ == "__main__": GUI() 
