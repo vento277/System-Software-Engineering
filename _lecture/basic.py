@@ -20,22 +20,36 @@ def function_name() -> None:
 # Exception Handling
 # Graceful error handling is crucial for robust code. Use exceptions to manage potential errors, but be cautious as handling exceptions can be costly in terms of performance.
 # Only use broad exception handling if you are certain that specific errors are expected and need to be managed.
+def exception1():
+    try: 
+        x = int(input("Enter an integer: "))
+    except ValueError:
+        # Handle the case where the input cannot be converted to an integer
+        print("Invalid input. Please enter a valid integer.")
 
-try: 
-    x = int(input("Enter an integer: "))
-except ValueError:
-    # Handle the case where the input cannot be converted to an integer
-    print("Invalid input. Please enter a valid integer.")
+def exception2():
+    try: 
+        x = int(input("Enter an integer: "))
+        print(1 / x)  # Attempt to divide by the user-provided integer
+    except ZeroDivisionError:
+        # Handle the case where the user provides zero, causing a division by zero error
+        print("Division by zero is not allowed.")
+    except ValueError:
+        # Handle the case where the input cannot be converted to an integer
+        print("Invalid input. Please enter a valid integer.")
+    except Exception as e:
+        # Catch all other exceptions and print a generic error message along with the exception details
+        print(f"An unexpected error occurred: {e}")
 
-try: 
-    x = int(input("Enter an integer: "))
-    print(1 / x)  # Attempt to divide by the user-provided integer
-except ZeroDivisionError:
-    # Handle the case where the user provides zero, causing a division by zero error
-    print("Division by zero is not allowed.")
-except ValueError:
-    # Handle the case where the input cannot be converted to an integer
-    print("Invalid input. Please enter a valid integer.")
-except Exception as e:
-    # Catch all other exceptions and print a generic error message along with the exception details
-    print(f"An unexpected error occurred: {e}")
+# In this example, `x` is recognized within the nested function `foo` 
+# even though it's defined outside of it. This is because when modifying 
+# a mutable object like a list (using .append), Python directly modifies 
+# the original object, unlike reassigning `x` with something like `x = 1`.
+def var_range():
+    x = [1, 2]
+    def foo():
+        x.append(2345)  # Modifies the original list `x`
+        print(x)        # Prints: [1, 2, 2345]
+    foo()
+    print(x)            # Also prints: [1, 2, 2345] since the original list was modified
+    
