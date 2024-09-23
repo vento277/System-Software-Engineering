@@ -9,3 +9,6 @@ A command-line tic-tac-toe game where you can play against the computer. In the 
 # Rational Number Calculator
 A rational number calculator with a graphical user interface (GUI) offers two main options. The basic calculator allows users to perform addition, subtraction, multiplication, and division of rational numbers, presenting results in their lowest terms. The advanced calculator provides additional functionality for calculations involving imaginary numbers (https://en.wikipedia.org/wiki/Complex_number), displaying results in floating-point format rounded to three decimal places.
 
+# Sudoku Solution Validator
+A solution validator for a sudoku puzzle (https://en.wikipedia.org/wiki/Sudoku) that uses a 9 x 9 grid in which each column, each row, as well as each of the nine 3 x 3 subgrids must contain all of the digits 1 to 9. The basic version operates with a single process, while the advanced version uses multiple processes.
+
