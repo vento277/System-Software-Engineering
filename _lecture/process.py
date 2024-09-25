@@ -50,3 +50,13 @@ if __name__ == "__main__":
 
 # finally: (anything that has to be ran regardingless of exception for anything. for example clean-ups). 
 # with: (resources and exceptional handling.)
+
+# This code implements a parallel processing approach to validate a Sudoku puzzle.
+# It uses Python's multiprocessing module to check columns, rows, and subgrids concurrently.
+
+# The code assumes the following have been previously defined:
+# - SIZE: The size of the Sudoku grid (likely 9 for a standard 9x9 Sudoku)
+# - testcase: The Sudoku puzzle to be validated
+# - checkColumn, checkRow, checkSubgrid: Functions to validate a column, row, and subgrid respectively
+# - processes: An empty list to store the created processes
+# - mp: The multiprocessing module (imported as 'mp')

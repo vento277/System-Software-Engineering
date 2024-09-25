@@ -113,7 +113,7 @@ if __name__ == "__main__":
               [5, 1, 9, 7, 2, 8, 6, 3, 4],
               [8, 3, 7, 6, 1, 4, 2, 9, 5 ]
             ]
-
+    
     # Additional valid test cases
     valid_1 = [
             [5, 3, 4, 6, 7, 8, 9, 1, 2],
@@ -202,13 +202,41 @@ if __name__ == "__main__":
             [2, 8, 7, 4, 1, 9, 6, 3, 5],
             [3, 4, 5, 2, 8, 6, 1, 1, 9]  
         ]
-
-    testcase = valid_4   #modify here for other testcases
+    
+    testcase = invalid_3   #modify here for other testcases
     SIZE = 9
 
-    for col in range(SIZE):  #checking all columns
-        checkColumn(testcase, col)
-    for row in range(SIZE):  #checking all rows
-        checkRow(testcase, row)
-    for subgrid in range(SIZE):   #checking all subgrids
-        checkSubgrid(testcase, subgrid)
+    # Logic and Information Flow:
+    # 1. The code creates separate processes for each column, row, and subgrid.
+    # 2. Each process runs independently and concurrently, performing its specific check.
+    # 3. The main process waits for all child processes to complete before proceeding.
+
+    # Multiprocessing Execution:
+    # 1. A total of 3 * SIZE processes are created (SIZE each for columns, rows, and subgrids).
+    # 2. Each process is started immediately after creation with proc.start().
+    # 3. The processes run in parallel, utilizing multiple CPU cores if available.
+    # 4. The main process uses join() to wait for all child processes to finish.
+
+    processes = [] # A list to store the processes
+
+    # Start processes for cols
+    for col in range(SIZE):
+        proc_col = mp.Process(target=checkColumn, args=(testcase, col))
+        processes.append(proc_col)
+        proc_col.start()
+
+    # Start processes for rows
+    for row in range(SIZE):
+        proc_row = mp.Process(target=checkRow, args=(testcase, row))
+        processes.append(proc_row)
+        proc_row.start()
+
+    # Start processes for subgrids
+    for subgrid in range(SIZE):
+        proc_subgrid = mp.Process(target=checkSubgrid, args=(testcase, subgrid))
+        processes.append(proc_subgrid)
+        proc_subgrid.start()
+
+    # Wait for all processes to finish
+    for proc in processes:
+        proc.join()
