@@ -29,7 +29,7 @@ if __name__ == "__main__":
     p1.start()
     
     # join([Timeout]), if empty, is indefinite. If there is a number, it timeouts for that much time. for doucmentation in python '[]' means optional. 
-    p1.join()
+    p1.join() # Can be called daemonic and non-daemonic. If daemonic, this is making it non-daemonic. 
     
     # This is single process way 
     # sayHello()
@@ -39,7 +39,9 @@ if __name__ == "__main__":
     # Process class
     # positional argument is how we call function in C
     # python can use keyword based function call. for example if the function equires foo(a,b,c)
-    # we can call it Process(target = sayHello, args("Victor",))
+    # we can call it Process(target = sayHello, args("Victor",)) -> ',' makes sure it is a tuple. args require this. kwargs expect dictionary.
+    # Why kwargs? clarity, keywords arg vs positional arg. kwargs is keyword. 
+     
     # tuple vs list, mutability
     
     # Spawning,  create a seperate process, a completly new python interpretor and the enviionrment is created for it - including its own GIL.

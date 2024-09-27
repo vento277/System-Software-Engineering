@@ -52,4 +52,24 @@ def var_range():
         print(x)        # Prints: [1, 2, 2345]
     foo()
     print(x)            # Also prints: [1, 2, 2345] since the original list was modified
-    
+
+
+# Don't over use to keep readability. 
+# List Comprehension is to create lists in interable nature. 
+
+# Normal way
+lst = list()
+for i in range(1, 4):
+    lst.append(i)
+print(lst)
+
+# Shortened way. More Pythonic way
+lst = [(i+1) for i in range(1,4)]
+print(lst)
+
+lst = [(i+1) for i in range(1,4) if i%2 == 0] # It can also be conditional
+print(lst)
+
+[print(i, end = "") for i in range(0,3)] # Whatever print returns goes into the list. Not the best readability.
+
+# for _ in range(3): can also be used is the value of i dosen't matter. 
