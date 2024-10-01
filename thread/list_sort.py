@@ -19,25 +19,21 @@ def sortingWorker(firstHalf: bool) -> None:
 
     length = len(testcase)
     mid_point = length // 2
-    temp = []
 
+    # Determine the half to sort and store it in temp
+    temp = testcase[:mid_point] if firstHalf else testcase[mid_point:]
+
+    # Implement a simple bubble sort algorithm
+    for i in range(len(temp)):
+        for j in range(0, len(temp) - i - 1):
+            if temp[j] > temp[j + 1]:
+                temp[j], temp[j + 1] = temp[j + 1], temp[j]
+
+    # Store the sorted half in the appropriate variable
     if firstHalf:
-        for i in range(mid_point):
-            temp.append(testcase[i])
+        sortedFirstHalf = temp
     else:
-        for i in range(mid_point, length):
-            temp.append(testcase[i])
-
-    # sorting list using nested loops
-    for i in range(0, len(temp)):
-        for j in range(i+1, len(temp)):
-            if temp[i] >= temp[j]:
-                temp[i], temp[j] = temp[j],temp[i]
-
-    if firstHalf:
-        sortedFirstHalf.extend(temp)
-    else:
-        sortedSecondHalf.extend(temp)
+        sortedSecondHalf = temp
 
 def mergingWorker() -> None:
     """ This function uses the two shared variables 
