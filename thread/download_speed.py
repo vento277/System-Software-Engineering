@@ -51,13 +51,20 @@ print()
 # You are to complete this portion
 list2 = random.sample(range(2, 100, 2), comicCount) # even numbers only, not to overlap with the other part
 start = time.time()
-# Your code come below here
 
+# Create and start threads
+threads = []
 
+# Create one thread per download
+for num in list2:
+    thread = threading.Thread(target=getComic, args=[num])
+    thread.start()
+    threads.append(thread)  # Store thread reference
 
+# Use the thread reference to join
+for thread in threads:
+    thread.join()
 
-
-# end of your code
 print()
 print(f"Using threading, it took {time.time() - start :.3f}s to download {comicCount} random comics")
 print()

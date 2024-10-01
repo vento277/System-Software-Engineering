@@ -1,7 +1,7 @@
 #student name: Peter Kim
 #student number: 18693002
 
-import threading as th
+import threading
 
 def sortingWorker(firstHalf: bool) -> None:
     """
@@ -17,13 +17,12 @@ def sortingWorker(firstHalf: bool) -> None:
     """
     global testcase, sortedFirstHalf, sortedSecondHalf
 
-    length = len(testcase)
-    mid_point = length // 2
+    mid_point = len(testcase) // 2
 
     # Determine the half to sort and store it in temp
     temp = testcase[:mid_point] if firstHalf else testcase[mid_point:]
 
-    # Implement a simple bubble sort algorithm
+    # Implement bubble sort algorithm
     for i in range(len(temp)):
         for j in range(0, len(temp) - i - 1):
             if temp[j] > temp[j + 1]:
@@ -41,58 +40,49 @@ def mergingWorker() -> None:
         them into a single sorted list that is stored in
         the shared variable sortedFullList.
     """
-    global testcase, sortedFirstHalf, sortedSecondHalf, SortedFullList
-    length1 = len(sortedFirstHalf)
-    length2 = len(sortedSecondHalf)
+    global SortedFullList
     temp: list = []
     i, j = 0, 0
 
     # Merge the two sorted halves
-    while i < length1 and j < length2:
-        if sortedFirstHalf[i] <= sortedSecondHalf[j]:
+    while i < len(sortedFirstHalf) and j < len(sortedSecondHalf):
+        if sortedFirstHalf[i] <= sortedSecondHalf[j]: # Compare the current elements of both sorted lists
             temp.append(sortedFirstHalf[i])
             i += 1
         else:
             temp.append(sortedSecondHalf[j])
             j += 1
 
-    # If there are remaining elements in sortedFirstHalf
-    while i < length1:
-        temp.append(sortedFirstHalf[i])
-        i += 1
+    # Append any remaining elements. The order here dosen't matter as at this point, one of the lists is already empty, and the remaining values
+    # are larger than thoes appended.
+    temp.extend(sortedFirstHalf[i:]) 
+    temp.extend(sortedSecondHalf[j:]) 
 
-    # If there are remaining elements in sortedSecondHalf
-    while j < length2:
-        temp.append(sortedSecondHalf[j])
-        j += 1
-
-    # Assign the merged list to sortedFullList
-    sortedFullList = temp
-
-    # Print the sorted lists for debugging purposes
-    print("Sorted First Half:", sortedFirstHalf)
-    print("Sorted Second Half:", sortedSecondHalf)
-    print("Merged List:", sortedFullList)
-
+    SortedFullList = temp  # Update the global variable
 
 if __name__ == "__main__":
-    #shared variables
-    testcase = [8,5,7,7,4,1,3,2,9,11,3,4,6,5,2,1,3,4,5,76,8,4]
+    # Shared variables
+    testcase = [1,78,2,-2,-3,45959,5,1,2,3,4,1,3,-12312,123,-32323,2,1,1,1,3,2,22,1,2,23,1]
     sortedFirstHalf: list = []
     sortedSecondHalf: list = []
     SortedFullList: list = []
-    
-    #to implement the rest of the code below, as specified 
-    thread1 = th.Thread(target = sortingWorker, args = (True,)) # The first arugment has to be callable - like function. 
-    thread2 = th.Thread(target = sortingWorker, args = (False,)) # The first arugment has to be callable - like function. 
-    thread3 = th.Thread(target = mergingWorker)
+
+    # Implement multithreading
+    thread1 = threading.Thread(target=sortingWorker, args=(True,))
+    thread2 = threading.Thread(target=sortingWorker, args=(False,))
+
+    # Start sorting threads
     thread1.start()
     thread2.start()
-    thread3.start()
 
+    # Wait for sorting threads to finish
     thread1.join()
     thread2.join()
+
+    # Now start the merging thread
+    thread3 = threading.Thread(target=mergingWorker)
+    thread3.start()
     thread3.join()
 
-    #as a simple test, printing the final sorted list
+    # As a simple test, print the final sorted list
     print("The final sorted list is ", SortedFullList)
