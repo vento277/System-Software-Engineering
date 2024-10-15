@@ -73,3 +73,27 @@ print(lst)
 [print(i, end = "") for i in range(0,3)] # Whatever print returns goes into the list. Not the best readability.
 
 # for _ in range(3): can also be used is the value of i dosen't matter. 
+
+
+# In python, k=z does not create a new list. k becomes a reference to z. So any change in k affects z as well. 
+# z = [0, 1]
+# k = z
+# k.append(3)
+# print(f"{z} {k}")
+
+# In Python, the class initializer (commonly known as the __init__ method) is not private. By default, methods in Python are public, which means they can be accessed from outside the class.
+
+# However, you can indicate that a method is intended to be private by prefixing its name with an underscore (e.g., _init). This is just a convention and does not prevent access; it signals to other developers that the method is intended for internal use.
+
+# self in the class method is not a keyword but only a convention. 
+
+# Here, since global x is called outside of the function, x is not updated globally and only locally. So the output is 454. 
+# global x
+# def foo():
+#     x = 5
+#     print(x, end="")
+#     x = x + 1
+# x = 4
+# print(x, end="")
+# foo()
+# print(x)

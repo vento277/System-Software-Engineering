@@ -62,3 +62,12 @@ if __name__ == "__main__":
 # - checkColumn, checkRow, checkSubgrid: Functions to validate a column, row, and subgrid respectively
 # - processes: An empty list to store the created processes
 # - mp: The multiprocessing module (imported as 'mp')
+
+# We can call join in non-daemoic processes. And timeout argument is optional. 
+
+# Start can be called this way. But the args is doing wrong beacuse it needs a comma. 
+# multiprocessing.Process(target = childProcess, args=("hello")).start()
+
+#Statement A: The fork process creation is the default for python in Windows. -> not true beacuse windows uses spawn method. Linux and maxOS uses fork.
+#Statement B: In python multiprocessing, there is no need for using a if __name__=="__main__": bock (it will work without any issue). -> main things has to be used since 
+# child process may execute from top-level code which leads to recursice process. 
