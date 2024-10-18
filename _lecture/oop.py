@@ -1,6 +1,14 @@
 """
 Type is a set of values and operations permitted on the value.
 Class is a way to create this type.
+
+
+# In Python, the class initializer (commonly known as the __init__ method) is not private. 
+# By default, methods in Python are public, which means they can be accessed from outside the class.
+
+# However, you can indicate that a method is intended to be private by prefixing its name with an underscore (e.g., _init). This is just a convention and does not prevent access; it signals to other developers that the method is intended for internal use.
+
+# self in the class method is not a keyword but only a convention. 
 """
 
 class BMI:
