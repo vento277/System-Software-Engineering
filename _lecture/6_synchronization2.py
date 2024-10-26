@@ -9,6 +9,11 @@ no circular wait can be avoided by having some order of all source types
 
 Starvation is when dealock consumes resources which prevents other processes to start. 
 
+There are three typical problems of deadlock.
+1. Producer-Consumer
+This problem concerns a producer and consumer, for which makes use of semaphore's indexing to keep track of how much
+has been produced.
+
 '''
 # Deadlock may happen due to the execution order/timing
 import threading
