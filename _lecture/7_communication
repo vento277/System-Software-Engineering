@@ -1,9 +1,0 @@
-'''
-Cooperating process needs interprocess communication (IPC) for them to exchange data and information
-
-IPC has two main models. shared memory and message passing.
-Shared memory requires processes to remove the retrictions of allowing other process to access a memory.
-Mssage passing provides mechanism for process to communicate and sycnhornize their actions.
-
-
-'''
