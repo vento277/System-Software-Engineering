@@ -17,6 +17,6 @@ A multithreaded sorting program that sorts a list of integers. Additionally, a p
 
 # Dining-Philosopher's Problem
 A multiprocessing implementation of the dining-philosophers synchronization problem. Note that in the provided code, we are using some random delay to simulate the time a philosopher takes to eat or to think. In total, there are three parts to the solution to avoid deadlock. They are: 
-1. "Our program as usual will spawn five processes to represent the five philosophers, but we only allow four philosophers to be sitting at the dining table (so to speak) to eat at any given time to limit the number of philosophers at the table."
-2. "Allow a philosopher to pick up her chopsticks only if both chopsticks are available."
-3. "Use an asymmetric solution, e.g. an odd philosopher picks up first her left chopstick and then her right chopstick, whereas an even philosopher picks up her right first and then her left chopstick."
+1. Our program as usual will spawn five processes to represent the five philosophers, but we only allow four philosophers to be sitting at the dining table (so to speak) to eat at any given time to limit the number of philosophers at the table.
+2. Allow a philosopher to pick up her chopsticks only if both chopsticks are available.
+3. Use an asymmetric solution, e.g. an odd philosopher picks up first her left chopstick and then her right chopstick, whereas an even philosopher picks up her right first and then her left chopstick.
