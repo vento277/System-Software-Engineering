@@ -1,5 +1,5 @@
-#student name:
-#student number:
+#student name: Peter Kim
+#student number: 18693002
 
 import multiprocessing
 import random #is used to cause some randomness 
@@ -42,13 +42,18 @@ if __name__ == "__main__":
     semaphoreList = list()          #this list will hold one semaphore per chopstick
     numberOfPhilosophers = 5
 
+    # Allow only 4 philosophers to sit. 
+    # With 4 philosophers and 5 chopsticks, there will always be at least one free chopstick.
+    # This ensures that at least one philosopher can complete their meal (get both chopsticks).
+    PhilosopherLimit = numberOfPhilosophers - 1
+
     for i in range(numberOfPhilosophers):             
         semaphoreList.append(multiprocessing.Semaphore(1))    #one semaphore per chopstick
 
     philosopherProcessList = list()
-    for i in range(numberOfPhilosophers): #instantiate all processes representing philosophers
+    for i in range(PhilosopherLimit): #instantiate 4 processes representing philosophers
         philosopherProcessList.append(multiprocessing.Process(target=philosopher, args=(i, semaphoreList)))
-    for j in range(numberOfPhilosophers): #start all child processes
+    for j in range(PhilosopherLimit): #start 4 child processes
         philosopherProcessList[j].start()
-    for k in range(numberOfPhilosophers): #join all child processes
+    for k in range(PhilosopherLimit): #join 4 child processes
         philosopherProcessList[k].join()
