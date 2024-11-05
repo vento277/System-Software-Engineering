@@ -15,8 +15,11 @@ A solution validator for a sudoku puzzle (https://en.wikipedia.org/wiki/Sudoku) 
 ## List Sorter and File Download Speed Tester
 A multithreaded sorting program that sorts a list of integers. Additionally, a program that compares the time taken to download a specified number of files from the Internet using two methods: sequentially (downloading one file after the other without threading) and through multithreading (assigning the download of each file to a separate thread).
 
-# Dining-Philosopher's Problem
+## Dining-Philosopher's Problem
 A multiprocessing implementation of the dining-philosophers synchronization problem. Note that in the provided code, we are using some random delay to simulate the time a philosopher takes to eat or to think. In total, there are three parts to the solution to avoid deadlock. They are: 
 1. Our program as usual will spawn five processes to represent the five philosophers, but we only allow four philosophers to be sitting at the dining table (so to speak) to eat at any given time to limit the number of philosophers at the table.
 2. Allow a philosopher to pick up her chopsticks only if both chopsticks are available.
 3. Use an asymmetric solution, e.g. an odd philosopher picks up first her left chopstick and then her right chopstick, whereas an even philosopher picks up her right first and then her left chopstick.
+
+## Unified Modeling Language
+A class diagram for three different programs.
