@@ -54,5 +54,11 @@ For all schedluing algorithms, we aim to minimize or maximize optimization crtie
     aim to maximize: CPU utilization, or throughput
     In most cases, we optimize for the average measure. 
 
+Real-time systems are event drive -> meaning that they wait for an event to happen. 
+This could cause a latency in that there is a spread between the event being serviced and the event being occured. 
+
+There are two latencies that affects performance. One is the dispatch and other is interrupt latency. 
+Interrupt latency is the time from the arrival of interrup to the sart of the routine that serfices interrup.
+
 
 '''
