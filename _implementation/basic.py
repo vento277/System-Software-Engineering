@@ -50,6 +50,42 @@ underscore._conv_private()
 underscore._B__private()
 
 
+# Define a class named Dog
+class Dog():
+    # Constructor (__init__) initializes the instance's attributes when the object is created.
+    def __init__(self, age: int, color: str):
+        # Attribute: age of the dog (an integer)
+        self.age = age
+        # Attribute: color of the dog (a string)
+        self.color = color
+    
+    # Method: Determines the breed category based on the age and color of the dog.
+    def breed(self) -> None:
+        # Local variables (not attributes): lists containing colors
+        one = ['black', 'white']  # Colors in group "one"
+        two = ['red', 'yellow']  # Colors in group "two"
+        
+        # Conditional structure to determine breed category
+        if self.age < 5:  # Check if the age is less than 5
+            if self.color in one:  # Check if color is in group "one"
+                print("This is A")
+            if self.color in two:  # Check if color is in group "two"
+                print("This is B")
+        elif 5 <= self.age <= 10:  # Check if age is between 5 and 10 (inclusive)
+            if self.color in one:  # Check if color is in group "one"
+                print("This is C")
+            if self.color in two:  # Check if color is in group "two"
+                print("This is D")
+        else:  # For age greater than 10
+            print("This is E")
+
+# Main execution block
+if __name__ == "__main__":
+    # Create an instance (which is also an object in Python) of the Dog class with age=5 and color='black'
+    mine = Dog(5, 'black')
+    # Call the breed method on the instance
+    mine.breed()
+
 # Runtime error as self.y is not defined.      
 # class Foo:
 #     def __init__(self, x):
