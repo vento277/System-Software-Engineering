@@ -4,7 +4,7 @@ scheduling. It gives some level of gurantee that the system responds within a sp
 
 There are two clsses of real-time systems:
 - Hard real-time systems which require a task to be serviced by its deadline. Eg. Air-bag, Heart pacemaker
-- Syft real-time systems which do not consider as a failure when missing a deadline. Throuhg it will consider it as degraded when that happens. Eg. web-browsing, media system
+- Soft real-time systems which do not consider as a failure when missing a deadline. Throuhg it will consider it as degraded when that happens. Eg. web-browsing, media system
 
 Embedded systems are specific-purpose (so not general-purpose) computing systems that are embedded within a bigger system. 
 

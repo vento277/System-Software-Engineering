@@ -58,6 +58,24 @@ Cooperating Processes require IPC to exchange data and information. IPC primaril
   - Bi-endian: Supports switchable endianness (e.g., ARM architecture).
 '''
 from socket import *
+from multiprocessing import shared_memory, Process
+import numpy as np
+
+def process(dataSize, dataType):
+  demo = shared_memory.SharedMemory(name = "demo") # create is 'false' to it is attaching.
+  b = np.ndarray((dataSize,), dtype = dataType, buffer = demo.buf)
+  print(f"Has access to {b}")
+  demo.close()
+  
+a = np.array([1,2,3,3,3])
+shm = shared_memory.SharedMemory(name = "demo", create = True, size = a.nbytes) # here we create the shared memory
+b = np.ndarray(a.shape, dtype = a.dtype, buffer = shm)
+b[:] = a[:]
+p = Process(target = process, kwargs={"dataSize": a.size, "dataType": type(a[0])})
+p.start()
+p.join()
+shm.close() # clean up in main
+shm.unlink() # clean up the memory
 
 # Python’s Socket Module
 # Reference: https://docs.python.org/3/library/socket.html
@@ -165,3 +183,4 @@ while True:
     
     # Send uppercased string back to the client
     serverSocket.sendto(modifiedMessage.encode(), clientAddress)
+    
