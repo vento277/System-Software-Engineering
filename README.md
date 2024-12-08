@@ -23,3 +23,14 @@ A multiprocessing implementation of the dining-philosophers synchronization prob
 
 ## Unified Modeling Language
 A class diagram for three different programs.
+
+## Project
+There are two parts:
+1. Snake Game
+
+    A simplified snake game using Tkinter implemented through multithreading.
+
+2. Simple Chat 
+    A chat application built using key modules such as socket, multiprocessing, threading, and Tkinter. 
+
+    Both the server and client are designed to run on the same machine, utilizing the IP address 127.0.0.1—commonly known as the loopback address—which refers to the local computer.
