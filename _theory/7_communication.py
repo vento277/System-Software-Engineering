@@ -1,61 +1,52 @@
 '''
-Cooperating Processes require IPC to exchange data and information. IPC primarily uses two models: shared memory and message passing.
+Cooperating Processes require IPC to exchange data and information. 
+IPC primarily uses two models: shared memory and message passing.
 
-1. Shared Memory
-- Definition: Allows multiple processes to access a common memory space.
-- Access Control: The operating system typically restricts memory access between processes. For shared memory, mutual agreement is necessary to grant access.
-- Synchronization: Processes must avoid simultaneous writes to the same memory location to prevent data inconsistency (e.g., the producer-consumer problem).
+Shared Memory allows multiple processes to access a common memory space.
+  - Access Control: The operating system typically restricts memory access between processes. For shared memory, mutual agreement is necessary to grant access.
+  - Synchronization: Processes must avoid simultaneous writes to the same memory location to prevent data inconsistency (e.g., the producer-consumer problem).
 
-2. Message Passing
-- Definition: Provides a mechanism for processes to communicate and synchronize their actions without sharing variables.
-- Key Operations:
-  - send(message): Sends a message to another process.
-  - receive(message): Receives a message from another process.
-- Usage: Particularly useful in distributed environments, such as chat applications.
-- Message Queues:
-  - Zero Capacity: The sender waits until the receiver is ready.
-  - Bounded Capacity: The sender blocks if the queue is full.
-  - Unbounded Capacity: The sender never waits, allowing continuous sending.
+Message Passing provides a mechanism for processes to communicate and synchronize their actions without sharing variables.
+  - Usage: Particularly useful in distributed environments, such as chat applications.
+  - Message Queues:
+    - Zero Capacity: The sender waits until the receiver is ready.
+    - Bounded Capacity: The sender blocks if the queue is full.
+    - Unbounded Capacity: The sender never waits, allowing continuous sending.
 
-3. Communication Links
-- A communication link must be established, which can be either physical (hardware) or logical (message queue).
-- Link Characteristics:
+A communication link must be established, which can be either physical (hardware) or logical (message queue).
+Link Characteristics:
   - Supports multi-process associations.
   - Can have fixed or variable message sizes.
   - Can be unidirectional or bi-directional.
 
-4. Communication Types
+Communication Types:
 - Blocking (Synchronous):
   - send blocks until the message is received.
   - receive blocks until a message is available.
 
-- Non-blocking (Asynchronous):
+Non-blocking (Asynchronous):
   - send continues immediately after sending the message.
   - receive may return a valid message or null if none is available.
 
-5. IPC Mechanisms
-- Sockets: Key mechanisms for inter-process communication (IPC), allowing two processes to communicate, either locally or remotely.
-  - TCP Sockets: Connection-oriented and reliable. Stream
-  - UDP Sockets: Connectionless with best-effort delivery. Datagram
+IPC Mechanisms:
+  - Sockets: Key mechanisms for inter-process communication (IPC), allowing two processes to communicate, either locally or remotely.
+    - TCP Sockets: Connection-oriented and reliable. Stream
+    - UDP Sockets: Connectionless with best-effort delivery. Datagram
 
-- Pipes: 
-  - Function as conduits for processes to communicate, supporting the producer-consumer model.
-  - Implementation involves ordinary pipes with read (r) and write (w) ends.
-  - Example Usage: ls | more in command-line environments.
+  - Pipes: 
+    - Function as conduits for processes to communicate, supporting the producer-consumer model.
+    - Implementation involves ordinary pipes with read (r) and write (w) ends.
+    - Example Usage: ls | more in command-line environments.
 
-- Remote Procedure Calls (RPC):
-  - Purpose: Allows remote procedure invocation as if it were local.
-  - Communication relies on message-based exchanges with structured messages.
-
-6. Client-Server Model
-- Definition: A relationship where a server provides services and clients request them.
-- Examples include email clients and web browsers.
-
-7. Data Representation Issues
-- Endianness: Differences in byte order between clients and servers must be managed.
-  - Little-endian: Least significant byte first (e.g., Intel x86).
-  - Big-endian: Most significant byte first (e.g., Motorola).
-  - Bi-endian: Supports switchable endianness (e.g., ARM architecture).
+  - Remote Procedure Calls (RPC):
+    - Purpose: Allows remote procedure invocation as if it were local.
+    - Communication relies on message-based exchanges with structured messages.
+    
+    Data Representation Issues
+      - Endianness: Differences in byte order between clients and servers must be managed.
+      - Little-endian: Store least significant byte first (e.g., Intel x86).
+      - Big-endian: Store most significant byte first (e.g., Motorola).
+      - Bi-endian: Supports switchable endianness (e.g., ARM architecture). 
 '''
 from socket import *
 from multiprocessing import shared_memory, Process

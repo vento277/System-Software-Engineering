@@ -1,7 +1,10 @@
 '''
 Deadlock happens when entities are waiting indefinitely for something from one another such that neither can proceed.
+
 The conditions are: Mutual exclusion, Hold and wait, No preemption and Circular Wait
+
 To ensure dealock to not happen, we just need to make sure one of the conditino is not met.
+
 For example, 
 hold and wait can be avoided by ensureing that a process hold only that of which is requested and nothing else.
 no preemptio can be avoided by releasing all the resource if requested resouce is not availalble immediately
@@ -10,10 +13,9 @@ no circular wait can be avoided by having some order of all source types
 Starvation is when dealock consumes resources which prevents other processes to start. 
 
 There are three typical problems of deadlock.
-1. Producer-Consumer
-This problem concerns a producer and consumer, for which makes use of semaphore's indexing to keep track of how much
-has been produced.
-
+    - Producer-Consumer
+    - Readers and Writers
+    - Dinning Philosophers
 '''
 # Deadlock may happen due to the execution order/timing
 import threading

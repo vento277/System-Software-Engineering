@@ -28,8 +28,7 @@ CPU scheduling decisions may take place when a process:
     4. Terminates
 
 1 and 4 is non-preemptive (or cooperative).
-    Once the CPU has been allocated to a process, the process keeps the CPU until 
-    it releases the CPU either by terminating or by switching to the waiting state.
+    CPU allotted to the process until its completion
 2 and 3 is preemptive
 
 Processes are generally divided into a number of CPU bursts.
@@ -41,8 +40,6 @@ of the CPU to the process selected. This involves:
 
 - Switching context
 - Jumping to the proper location in the user program to restart that program
-
-Dispatch latency is the time it takes for the dispatcher to stop one process and start another running.
 
 Scheduling algorithms criteria:
     Waiting time – amount of time a process has been waiting in the ready queue
@@ -70,7 +67,9 @@ For all schedluing algorithms, we aim to minimize or maximize optimization crtie
 
 Real-time systems are event driven -> meaning that they wait for an event to happen. 
 This could cause a latency in that there is a spread between the event being serviced and the event being occured. 
-There are two latencies that affects performance. One is the dispatch and other is interrupt latency. 
+There are two latencies that affects performance. 
+One is the dispatch and other is interrupt latency. 
+
 Interrupt latency is the time from the arrival of interrup to the start of the routine that serfices interrup.
 Dispatch latency is the time it takes for a dispatcher to take the current process off and move to other CPU.
 
@@ -83,7 +82,7 @@ P3 - 3
 0 - 3 - 27 - 30
 Waiting time = (0 + 3 + 27) / 3 
 
-Shortest-Job_First - Whichever has the shortest job-time gets to go first
+Shortest-Job_First - Whichever has the shortest job-time gets to go first (optimal)
 P1 - 3
 P2 - 24
 P3 - 4
@@ -123,7 +122,6 @@ One can also set a prioiry among the partitioned queues or set a fixed amount of
 
 If multiple cores are availalble, one can share the load. This allows for load balancing. 
 Also allow soft affinity where a process can migrate between processors.
-
 Memory stall is the time it takes for a processor to access its data when accessing a memory.
 
 

@@ -1,12 +1,11 @@
 '''
-Process is a program that is in execution. It is different to program in that process is active.
-And process is executed sequentially.
-
-Process generally has a stack (temp storage), a heap(dynamic memory allocation) and a data section.
+Process is a basic unit of execution and program that is in execution. It is an active entity. 
+It is different to a program which is an passive entity. And has sections such as stack(temp storage), heap(dynamic mem allocation) and data.
 
 Process also has states, which includes: new, ready, waiting, running, terminated.
 
-Process control block contains information such as the process state & number, program counter, registers...etc.
+Process control block contains information such as the process state & number, program counter, registers, schedulling information,
+I?O status information...etc.
 
 Concurrent events are those that happen at the same time from one source. In software, the concurrency happens due to the fast
 switching between events. The speed in which it happens make it look like it is happening in parallel. But parallel are those that happen

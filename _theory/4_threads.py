@@ -15,13 +15,6 @@ Why choose threads over processes?
 3. Limited Cores: If multiple CPU cores are limited, threading might be more practical than multiprocessing
 4. Overhead Concerns: When the overhead of inter-process communication would be too high
 
-Four Main Benefits of Threading:
-------------------------------
-1. Responsiveness: Keep UI responsive while handling background tasks
-2. Resource Sharing: Efficient sharing of resources within the same process
-3. Economy: Less overhead compared to creating new processes
-4. Scalability: Better resource utilization for certain types of applications
-
 Performance Considerations:
 -------------------------
 - Amdahl's Law describes the theoretical speedup in latency of the execution of a task at fixed workload
